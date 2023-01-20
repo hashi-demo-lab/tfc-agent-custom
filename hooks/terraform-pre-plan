@@ -28,5 +28,5 @@ EOF
 
 echo "AWS provider auth for plan prepared"
 echo "AWS ACCESS KEY ID: $AWS_ACCESS_KEY_ID"
-
+env
 # TODO: add error handling

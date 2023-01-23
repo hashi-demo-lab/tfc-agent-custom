@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Preparing AWS provider auth for plan..."
-
+echo ENV
 jq -n -r --arg JWT "$TFC_WORKLOAD_IDENTITY_TOKEN" --arg ROLE "$TFC_VAULT_PLAN_ROLE" '{"jwt": $JWT, "role": $ROLE}' > payload.json
 
 export VAULT_TOKEN=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/jwt/login \

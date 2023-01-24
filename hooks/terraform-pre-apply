@@ -9,23 +9,26 @@ export VAULT_TOKEN=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/j
     --data @payload.json | jq -r '.auth.client_token')
 
 echo $VAULT_TOKEN > ~/.vault-token
+if [ "$CLOUD_PROVIDER_AWS" == "true" ]
+then
+    CREDS=$(curl --insecure --silent --show-error --header "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/$TFC_WORKSPACE_NAME/$VAULT_PATH/creds/$TFC_VAULT_APPLY_ROLE)
 
-CREDS=$(curl --insecure --silent --show-error --header "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/$TFC_WORKSPACE_NAME/creds/$TFC_VAULT_APPLY_ROLE)
+    AWS_ACCESS_KEY_ID="$(jq -r '.data.access_key' <<<$CREDS)"
+    AWS_SECRET_ACCESS_KEY="$(jq -r '.data.secret_key' <<<$CREDS)"
+    AWS_SESSION_TOKEN="$(jq -r '.data.security_token' <<<$CREDS)"
+    sleep 10  # wait for IAM User eventual consistency
 
-AWS_ACCESS_KEY_ID="$(jq -r '.data.access_key' <<<$CREDS)"
-AWS_SECRET_ACCESS_KEY="$(jq -r '.data.secret_key' <<<$CREDS)"
-AWS_SESSION_TOKEN="$(jq -r '.data.security_token' <<<$CREDS)"
-sleep 10  # wait for IAM User eventual consistency
-
-mkdir ~/.aws
-cat <<EOF > ~/.aws/credentials
-[default]
-aws_access_key_id=$AWS_ACCESS_KEY_ID
-aws_secret_access_key=$AWS_SECRET_ACCESS_KEY
-aws_session_token=$AWS_SESSION_TOKEN
+    mkdir ~/.aws
+    cat <<EOF > ~/.aws/credentials
+    [default]
+    aws_access_key_id=$AWS_ACCESS_KEY_ID
+    aws_secret_access_key=$AWS_SECRET_ACCESS_KEY
+    aws_session_token=$AWS_SESSION_TOKEN
 EOF
 
-echo "AWS provider auth for apply prepared"
-echo "AWS ACCESS KEY ID: $AWS_ACCESS_KEY_ID"
+    echo "AWS provider auth for apply prepared"
+    echo "AWS ACCESS KEY ID: $AWS_ACCESS_KEY_ID"
+
+fi
 
 # TODO: add error handling

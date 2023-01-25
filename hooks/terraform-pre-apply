@@ -31,4 +31,11 @@ EOF
 
 fi
 
-# TODO: add error handling
+if [ "$CLOUD_PROVIDER_AZURE" == "true" ]
+then
+    CREDS=$(curl --insecure --silent --show-error --header "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/$TFC_WORKSPACE_NAME/$VAULT_PATH/creds/$TFC_VAULT_APPLY_ROLE)
+
+    CLIENT_ID="$(jq -r '.data.client_id' <<<$CREDS)"
+    CLIENT_SECRET="$(jq -r '.data.client_secret' <<<$CREDS)"
+fi
+

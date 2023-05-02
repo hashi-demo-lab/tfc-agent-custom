@@ -1,14 +1,21 @@
 #!/bin/bash
 
 echo "Preparing AWS provider auth for plan..."
-printenv
+#printenv
 jq -n -r --arg JWT "$TFC_WORKLOAD_IDENTITY_TOKEN" --arg ROLE "$TFC_VAULT_PLAN_ROLE" '{"jwt": $JWT, "role": $ROLE}' > payload.json
 
 export VAULT_TOKEN=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/jwt/login \
     --request POST \
     --data @payload.json | jq -r '.auth.client_token')
 
-echo $VAULT_TOKEN > ~/.vault-token
+#echo $VAULT_TOKEN > ~/.vault-token
+
+cat <<EOF > ~/.vault-token
+$VAULT_TOKEN
+EOF
+
+echo --test--
+cat ~/.vault-token
 
 if [ "$CLOUD_PROVIDER_AWS" == "true" ]
 then

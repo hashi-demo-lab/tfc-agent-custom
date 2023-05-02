@@ -3,11 +3,13 @@
 echo "Revoking plan credentials..."
 printenv
 export VAULT_TOKEN=$(cat ~/.vault-token)
+echo "VT: " $VAULT_TOKEN
 
-RESPONSE=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/token/revoke-self \
-    --header "X-Vault-Token: $VAULT_TOKEN" --request POST)
+#RESPONSE=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/token/revoke-self \
+#    --header "X-Vault-Token: $VAULT_TOKEN" --request POST)
 
 response=$?
+RESPONSE=""
 
 if test "$response" != "0"; then
    echo "The curl command failed with: $response. Credentials may not have been revoked, or were already revoked."

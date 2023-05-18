@@ -1,9 +1,12 @@
 #!/bin/bash
 
 echo "Revoking plan credentials..."
-printenv
+
+echo --post-plan-test ~/.vault-token--
+cat ~/.vault-token
+
 export VAULT_TOKEN=$(cat ~/.vault-token)
-echo "VT: " $VAULT_TOKEN
+echo $VAULT_TOKEN
 
 #RESPONSE=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/token/revoke-self \
 #    --header "X-Vault-Token: $VAULT_TOKEN" --request POST)

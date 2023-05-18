@@ -14,8 +14,9 @@ cat <<EOF > ~/.vault-token
 $VAULT_TOKEN
 EOF
 
-echo --test--
+echo --pre-plan-test ~/.vault-token--
 cat ~/.vault-token
+echo $VAULT_TOKEN
 
 if [ "$CLOUD_PROVIDER_AWS" == "true" ]
 then
@@ -38,5 +39,7 @@ EOF
     echo "AWS provider auth for plan prepared"
     echo "AWS ACCESS KEY ID: $AWS_ACCESS_KEY_ID"
 
+    echo --test ~/.aws/credentials--
+    cat ~/.aws/credentials
 fi
 # TODO: add error handling
